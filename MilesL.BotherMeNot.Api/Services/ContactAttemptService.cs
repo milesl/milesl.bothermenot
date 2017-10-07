@@ -37,7 +37,7 @@ namespace MilesL.BotherMeNot.Api.Services
 
             await this.contactAttemptRepository.Create(contactAttempt);
 
-            return contact.Action;
+            return contactRecord.Action;
         }
     }
 }

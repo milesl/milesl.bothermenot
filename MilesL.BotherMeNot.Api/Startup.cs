@@ -11,6 +11,7 @@ using MilesL.BotherMeNot.Api.Services.Interfaces;
 using MilesL.BotherMeNot.Api.Services;
 using MilesL.BotherMeNot.Api.Repositories;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
+using MilesL.BotherMeNot.Api.Configuration;
 
 namespace MilesL.BotherMeNot.Api
 {
@@ -38,6 +39,8 @@ namespace MilesL.BotherMeNot.Api
         /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+
             // Add mvc support
             services.AddMvc();
 
@@ -64,7 +67,7 @@ namespace MilesL.BotherMeNot.Api
 
             // Add automapper
             services.AddAutoMapper();
-
+            services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
             services.AddDbContext<BotherMeNotDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IContactAttemptService, ContactAttemptService>();
             services.AddScoped<IContactAttemptRepository, ContactAttemptRepository>();
@@ -83,6 +86,8 @@ namespace MilesL.BotherMeNot.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStaticFiles();
 
             // Adds Swagger
             app.UseSwagger();
