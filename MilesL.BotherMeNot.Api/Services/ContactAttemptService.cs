@@ -29,6 +29,21 @@ namespace MilesL.BotherMeNot.Api.Services
 
         public async Task<string> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact)
         {
+            // Get or create contact record
+            contact = await this.GetContactOrCreate(contact);
+
+            contactAttempt.Action = contact.Action;
+            contactAttempt.ContactId = contact.Id;
+
+            await this.contactAttemptRepository.Create(contactAttempt);
+
+            var contactAction = this.contactActionAccessor(contact.Action);
+
+            return contactAction.GetResponse();
+        }
+
+        public async Task<IContact> GetContactOrCreate(IContact contact)
+        {
             // Has their been contact before
             var contactRecord = await this.contactRepository.GetContactByNumber(contact.Number);
             if (contactRecord == null)
@@ -38,14 +53,7 @@ namespace MilesL.BotherMeNot.Api.Services
                 contactRecord = await this.contactRepository.GetContactByNumber(contact.Number);
             }
 
-            contactAttempt.Action = contactRecord.Action;
-            contactAttempt.ContactId = contactRecord.Id;
-
-            await this.contactAttemptRepository.Create(contactAttempt);
-
-            var contactAction = this.contactActionAccessor(contactRecord.Action);
-
-            return contactAction.GetResponse();
+            return contactRecord;
         }
     }
 }
