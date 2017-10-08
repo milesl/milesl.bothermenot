@@ -11,9 +11,10 @@ using MilesL.BotherMeNot.Api.Services.Interfaces;
 using MilesL.BotherMeNot.Api.Models;
 using MilesL.BotherMeNot.Api.Configuration;
 
-namespace MilesL.BotherMeNot.Api.Controllers
+namespace MilesL.BotherMeNot.Api.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class VoiceController : Controller
     {
         private IMapper mapper;
