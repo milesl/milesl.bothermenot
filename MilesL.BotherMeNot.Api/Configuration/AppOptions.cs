@@ -9,6 +9,6 @@ namespace MilesL.BotherMeNot.Api.Configuration
     {
         public string RedirectNumber { get; set; }
 
-        public string RickRollFile { get; set; }
+        public string PlayFileUrl { get; set; }
     }
 }

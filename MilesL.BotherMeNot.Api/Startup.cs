@@ -12,6 +12,10 @@ using MilesL.BotherMeNot.Api.Services;
 using MilesL.BotherMeNot.Api.Repositories;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
 using MilesL.BotherMeNot.Api.Configuration;
+using MilesL.BotherMeNot.Api.Actions.Interfaces;
+using System;
+using MilesL.BotherMeNot.Api.Actions;
+using System.Collections.Generic;
 
 namespace MilesL.BotherMeNot.Api
 {
@@ -72,6 +76,27 @@ namespace MilesL.BotherMeNot.Api
             services.AddScoped<IContactAttemptService, ContactAttemptService>();
             services.AddScoped<IContactAttemptRepository, ContactAttemptRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<HangUpContactAction>();
+            services.AddScoped<RedirectContactAction>();
+            services.AddScoped<PlayFileContactAction>();
+            services.AddScoped(factory =>
+            {
+                Func<ContactAction, IContactAction> accesor = key =>
+                {
+                    switch (key)
+                    {
+                        case ContactAction.HangUp:
+                            return factory.GetService<HangUpContactAction>();
+                        case ContactAction.Redirect:
+                            return factory.GetService<RedirectContactAction>();
+                        case ContactAction.PlayFile:
+                            return factory.GetService<PlayFileContactAction>();
+                        default:
+                            throw new KeyNotFoundException(); // or maybe return null, up to you
+                    }
+                };
+                return accesor;
+            });
         }
 
         /// <summary>

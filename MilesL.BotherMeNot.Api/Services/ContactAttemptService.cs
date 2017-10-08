@@ -6,22 +6,43 @@ using System.Threading.Tasks;
 using MilesL.BotherMeNot.Api.Models;
 using MilesL.BotherMeNot.Api.Models.Interfaces;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
+using MilesL.BotherMeNot.Api.Actions.Interfaces;
 
 namespace MilesL.BotherMeNot.Api.Services
 {
     public class ContactAttemptService : IContactAttemptService
     {
-        private IContactRepository contactRepository;
+        private readonly IContactRepository contactRepository;
 
-        private IContactAttemptRepository contactAttemptRepository;
+        private readonly IContactAttemptRepository contactAttemptRepository;
 
-        public ContactAttemptService(IContactRepository contactRepository, IContactAttemptRepository contactAttemptRepository)
+        private readonly Func<ContactAction, IContactAction> contactActionAccessor;
+
+        public ContactAttemptService(IContactRepository contactRepository,
+            IContactAttemptRepository contactAttemptRepository,
+            Func<ContactAction, IContactAction> contactActionAccessor)
         {
             this.contactRepository = contactRepository;
             this.contactAttemptRepository = contactAttemptRepository;
+            this.contactActionAccessor = contactActionAccessor;
         }
 
-        public async Task<ContactAction> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact)
+        public async Task<string> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact)
+        {
+            // Get or create contact record
+            contact = await this.GetContactOrCreate(contact);
+
+            contactAttempt.Action = contact.Action;
+            contactAttempt.ContactId = contact.Id;
+
+            await this.contactAttemptRepository.Create(contactAttempt);
+
+            var contactAction = this.contactActionAccessor(contact.Action);
+
+            return contactAction.GetResponse();
+        }
+
+        public async Task<IContact> GetContactOrCreate(IContact contact)
         {
             // Has their been contact before
             var contactRecord = await this.contactRepository.GetContactByNumber(contact.Number);
@@ -32,12 +53,7 @@ namespace MilesL.BotherMeNot.Api.Services
                 contactRecord = await this.contactRepository.GetContactByNumber(contact.Number);
             }
 
-            contactAttempt.Action = contactRecord.Action;
-            contactAttempt.ContactId = contactRecord.Id;
-
-            await this.contactAttemptRepository.Create(contactAttempt);
-
-            return contactRecord.Action;
+            return contactRecord;
         }
     }
 }

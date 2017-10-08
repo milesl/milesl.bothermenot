@@ -9,6 +9,6 @@ namespace MilesL.BotherMeNot.Api.Models
     {
         Redirect = 0,
         HangUp = 1,
-        RickRoll = 2
+        PlayFile = 2
     }
 }
