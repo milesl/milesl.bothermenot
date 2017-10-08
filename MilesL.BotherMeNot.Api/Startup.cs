@@ -125,6 +125,15 @@ namespace MilesL.BotherMeNot.Api
 
             // Adds MVC
             app.UseMvc();
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<BotherMeNotDbContext>();
+                if (!context.Database.EnsureCreated())
+                {
+                    context.Database.Migrate();
+                }
+            }
         }
     }
 }
