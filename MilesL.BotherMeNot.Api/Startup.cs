@@ -16,6 +16,8 @@ using MilesL.BotherMeNot.Api.Actions.Interfaces;
 using System;
 using MilesL.BotherMeNot.Api.Actions;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using MilesL.BotherMeNot.Api.Conventions;
 
 namespace MilesL.BotherMeNot.Api
 {
@@ -45,15 +47,18 @@ namespace MilesL.BotherMeNot.Api
         {
             services.AddOptions();
 
-            // Add mvc support
-            services.AddMvc();
+            services.AddMvc(mvc =>
+            {
+                mvc.Conventions.Add(new DefaultRoutePrefixConvention());
+            });
 
             // Configure versioning support
-            services.AddApiVersioning(option =>
+            services.AddApiVersioning(options =>
             {
-                option.ReportApiVersions = true;
-                option.AssumeDefaultVersionWhenUnspecified = true;
-                option.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
+                options.DefaultApiVersion = new ApiVersion(1, 0);
             });
 
             // Add swagger documentation
@@ -97,6 +102,8 @@ namespace MilesL.BotherMeNot.Api
                 };
                 return accesor;
             });
+
+
         }
 
         /// <summary>
