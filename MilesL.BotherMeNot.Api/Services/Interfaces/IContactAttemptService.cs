@@ -9,6 +9,6 @@ namespace MilesL.BotherMeNot.Api.Services.Interfaces
 {
     public interface IContactAttemptService
     {
-        Task<ContactAction> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact);
+        Task<string> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact);
     }
 }

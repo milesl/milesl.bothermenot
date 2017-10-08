@@ -6,22 +6,28 @@ using System.Threading.Tasks;
 using MilesL.BotherMeNot.Api.Models;
 using MilesL.BotherMeNot.Api.Models.Interfaces;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
+using MilesL.BotherMeNot.Api.Actions.Interfaces;
 
 namespace MilesL.BotherMeNot.Api.Services
 {
     public class ContactAttemptService : IContactAttemptService
     {
-        private IContactRepository contactRepository;
+        private readonly IContactRepository contactRepository;
 
-        private IContactAttemptRepository contactAttemptRepository;
+        private readonly IContactAttemptRepository contactAttemptRepository;
 
-        public ContactAttemptService(IContactRepository contactRepository, IContactAttemptRepository contactAttemptRepository)
+        private readonly Func<ContactAction, IContactAction> contactActionAccessor;
+
+        public ContactAttemptService(IContactRepository contactRepository,
+            IContactAttemptRepository contactAttemptRepository,
+            Func<ContactAction, IContactAction> contactActionAccessor)
         {
             this.contactRepository = contactRepository;
             this.contactAttemptRepository = contactAttemptRepository;
+            this.contactActionAccessor = contactActionAccessor;
         }
 
-        public async Task<ContactAction> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact)
+        public async Task<string> HandleVoiceRequest(IContactAttempt contactAttempt, IContact contact)
         {
             // Has their been contact before
             var contactRecord = await this.contactRepository.GetContactByNumber(contact.Number);
@@ -37,7 +43,9 @@ namespace MilesL.BotherMeNot.Api.Services
 
             await this.contactAttemptRepository.Create(contactAttempt);
 
-            return contactRecord.Action;
+            var contactAction = this.contactActionAccessor(contactRecord.Action);
+
+            return contactAction.GetResponse();
         }
     }
 }
