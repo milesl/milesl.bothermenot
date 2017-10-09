@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilesL.BotherMeNot.Api", "M
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F25E3401-B534-4352-A922-32D0FE0E2A06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MilesL.BotherMeNot.Api.Tests", "tests\MilesL.BotherMeNot.Api.Tests\MilesL.BotherMeNot.Api.Tests.csproj", "{44663719-C3D2-4875-A5A9-FFC1039CCCD3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MilesL.BotherMeNot.Api.Tests", "tests\MilesL.BotherMeNot.Api.Tests\MilesL.BotherMeNot.Api.Tests.csproj", "{44663719-C3D2-4875-A5A9-FFC1039CCCD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StyleCop", "StyleCop", "{8D58467F-DB93-4824-868B-54728DE30660}"
+	ProjectSection(SolutionItems) = preProject
+		StyleCop\StyleCop.Analyzers.ruleset = StyleCop\StyleCop.Analyzers.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

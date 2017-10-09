@@ -1,23 +1,23 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Swagger;
+using MilesL.BotherMeNot.Api.Actions;
+using MilesL.BotherMeNot.Api.Actions.Interfaces;
+using MilesL.BotherMeNot.Api.Configuration;
+using MilesL.BotherMeNot.Api.Conventions;
 using MilesL.BotherMeNot.Api.Models;
-using Microsoft.EntityFrameworkCore;
-using MilesL.BotherMeNot.Api.Services.Interfaces;
-using MilesL.BotherMeNot.Api.Services;
 using MilesL.BotherMeNot.Api.Repositories;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
-using MilesL.BotherMeNot.Api.Configuration;
-using MilesL.BotherMeNot.Api.Actions.Interfaces;
-using System;
-using MilesL.BotherMeNot.Api.Actions;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using MilesL.BotherMeNot.Api.Conventions;
+using MilesL.BotherMeNot.Api.Services;
+using MilesL.BotherMeNot.Api.Services.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace MilesL.BotherMeNot.Api
 {
@@ -27,22 +27,23 @@ namespace MilesL.BotherMeNot.Api
     public class Startup
     {
         /// <summary>
-        /// Initialises a instance of the <see cref="Startup"/> class
+        /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">A instance of the IConfiguration interface</param>
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         /// <summary>
-        /// A instance of the IConfiguration interface
+        /// Gets a instance of the IConfiguration interface
         /// </summary>
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// Configures the services.
         /// </summary>
+        /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
@@ -64,20 +65,15 @@ namespace MilesL.BotherMeNot.Api
             // Add swagger documentation
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Bother Me Not Api",
-                    Description = "",
-                    TermsOfService = "None",
-                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact { Name = "Luke Miles", Email = "lukemiles@outlook.com", Url = "https://lmiles.co.uk" }
-                });
+                c.SwaggerDoc(
+                    "v1",
+                    new Info { Version = "v1", Title = "Bother Me Not Api", Description = string.Empty, TermsOfService = "None", Contact = new Swashbuckle.AspNetCore.Swagger.Contact { Name = "Luke Miles", Email = "lukemiles@outlook.com", Url = "https://lmiles.co.uk" } });
             });
 
             // Add automapper
             services.AddAutoMapper();
-            services.Configure<AppOptions>(Configuration.GetSection("AppOptions"));
-            services.AddDbContext<BotherMeNotDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.Configure<AppOptions>(this.Configuration.GetSection("AppOptions"));
+            services.AddDbContext<BotherMeNotDbContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IContactAttemptService, ContactAttemptService>();
             services.AddScoped<IContactAttemptRepository, ContactAttemptRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
@@ -102,12 +98,10 @@ namespace MilesL.BotherMeNot.Api
                 };
                 return accesor;
             });
-
-
         }
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline. 
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app">A instance of the IApplicationBuilder interface</param>
         /// <param name="env">A instance of the IHostingEnvironment interface</param>
