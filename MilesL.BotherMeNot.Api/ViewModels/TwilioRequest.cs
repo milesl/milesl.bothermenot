@@ -10,6 +10,7 @@ namespace MilesL.BotherMeNot.Api.ViewModels
     /// </summary>
     public abstract class TwilioRequest
     {
+#pragma warning disable SA1623 // Property summary documentation must match accessors
         /// <summary>
         /// Your Twilio account id. It is 34 characters long, and always starts with the letters AC
         /// </summary>
@@ -30,7 +31,6 @@ namespace MilesL.BotherMeNot.Api.ViewModels
         /// Phone numbers are formatted with a '+' and country code, e.g. +16175551212 (E.164 format). Client identifiers begin with the client: URI scheme; for example, for a call to a client named 'jenny', the To parameter will be client:jenny.
         /// </remarks>
         public string To { get; set; }
-
 
         /// <summary>
         /// The city of the caller
@@ -71,5 +71,7 @@ namespace MilesL.BotherMeNot.Api.ViewModels
         /// The country of the called party
         /// </summary>
         public string ToCountry { get; set; }
+
+#pragma warning restore SA1623 // Property summary documentation must match accessors
     }
 }
