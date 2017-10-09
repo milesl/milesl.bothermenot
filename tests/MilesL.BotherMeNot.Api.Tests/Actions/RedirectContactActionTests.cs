@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MilesL.BotherMeNot.Api.Tests.Actions
 {
-    public class RedirectContactAction
+    public class RedirectContactActionTests
     {
     }
 }

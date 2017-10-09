@@ -1,12 +1,11 @@
-﻿using MilesL.BotherMeNot.Api.Actions;
+﻿using System;
+using MilesL.BotherMeNot.Api.Actions;
 using MilesL.BotherMeNot.Api.Actions.Interfaces;
 using MilesL.BotherMeNot.Api.Models;
 using MilesL.BotherMeNot.Api.Models.Interfaces;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
 using MilesL.BotherMeNot.Api.Services;
 using Moq;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MilesL.BotherMeNot.Api.Tests.Services
@@ -21,10 +20,10 @@ namespace MilesL.BotherMeNot.Api.Tests.Services
         public async void GetContactOrCreate_Creates_Contact_If_None_Exists()
         {
             var contact = new Contact() { Action = ContactAction.HangUp, Id = 1, Name = "Test", Number = "+4471234567898" };
-            moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync((IContact)null);
-            var contactAttemptService = new ContactAttemptService(moqContactRepository.Object, moqContactAttemptRepository.Object, moqContactActionAccessor.Object);
-            var result = await contactAttemptService.GetContactOrCreate(contact);
-            moqContactRepository.Verify(m => m.Create(It.IsAny<IContact>()), Times.Once);
+            this.moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync((IContact)null);
+            var contactAttemptService = new ContactAttemptService(this.moqContactRepository.Object, this.moqContactAttemptRepository.Object, this.moqContactActionAccessor.Object);
+            var result = await contactAttemptService.GetOrCreateContact(contact);
+            this.moqContactRepository.Verify(m => m.Create(It.IsAny<IContact>()), Times.Once);
             Assert.True(true);
         }
 
@@ -35,14 +34,14 @@ namespace MilesL.BotherMeNot.Api.Tests.Services
             var contact = new Contact() { Action = ContactAction.HangUp, Id = 1, Name = "Test", Number = "+4471234567898" };
 
             // Setup mocks
-            moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
+            this.moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
 
             // Run test
-            var contactAttemptService = new ContactAttemptService(moqContactRepository.Object, moqContactAttemptRepository.Object, moqContactActionAccessor.Object);
-            var result = await contactAttemptService.GetContactOrCreate(contact);
+            var contactAttemptService = new ContactAttemptService(this.moqContactRepository.Object, this.moqContactAttemptRepository.Object, this.moqContactActionAccessor.Object);
+            var result = await contactAttemptService.GetOrCreateContact(contact);
 
             // Check results
-            moqContactRepository.Verify(m => m.Create(It.IsAny<IContact>()), Times.Never);
+            this.moqContactRepository.Verify(m => m.Create(It.IsAny<IContact>()), Times.Never);
             Assert.Equal(contact, result);
         }
 
@@ -54,11 +53,11 @@ namespace MilesL.BotherMeNot.Api.Tests.Services
             var contactAttempt = new ContactAttempt() { ContactTime = DateTime.Now };
 
             // Setup mocks
-            moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
-            moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(new HangUpContactAction());
+            this.moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
+            this.moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(new HangUpContactAction());
 
             // Run test
-            var contactAttemptService = new ContactAttemptService(moqContactRepository.Object, moqContactAttemptRepository.Object, moqContactActionAccessor.Object);
+            var contactAttemptService = new ContactAttemptService(this.moqContactRepository.Object, this.moqContactAttemptRepository.Object, this.moqContactActionAccessor.Object);
             var result = await contactAttemptService.HandleVoiceRequest(contactAttempt, contact);
 
             // Check results
@@ -74,15 +73,15 @@ namespace MilesL.BotherMeNot.Api.Tests.Services
             var contactAttempt = new ContactAttempt() { ContactTime = DateTime.Now };
 
             // Setup mocks
-            moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
-            moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(new HangUpContactAction());
+            this.moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
+            this.moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(new HangUpContactAction());
 
             // Run test
-            var contactAttemptService = new ContactAttemptService(moqContactRepository.Object, moqContactAttemptRepository.Object, moqContactActionAccessor.Object);
+            var contactAttemptService = new ContactAttemptService(this.moqContactRepository.Object, this.moqContactAttemptRepository.Object, this.moqContactActionAccessor.Object);
             var result = await contactAttemptService.HandleVoiceRequest(contactAttempt, contact);
 
             // Check results
-            moqContactAttemptRepository.Verify(m => m.Create(It.IsAny<IContactAttempt>()), Times.Once);
+            this.moqContactAttemptRepository.Verify(m => m.Create(It.IsAny<IContactAttempt>()), Times.Once);
             Assert.True(true);
         }
 
@@ -95,11 +94,11 @@ namespace MilesL.BotherMeNot.Api.Tests.Services
             HangUpContactAction contactAction = new HangUpContactAction();
 
             // Setup mocks
-            moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
-            moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(contactAction);
+            this.moqContactRepository.Setup(m => m.GetContactByNumber(It.IsAny<string>())).ReturnsAsync(contact);
+            this.moqContactActionAccessor.Setup(m => m(It.IsAny<ContactAction>())).Returns(contactAction);
 
             // Run test
-            var contactAttemptService = new ContactAttemptService(moqContactRepository.Object, moqContactAttemptRepository.Object, moqContactActionAccessor.Object);
+            var contactAttemptService = new ContactAttemptService(this.moqContactRepository.Object, this.moqContactAttemptRepository.Object, this.moqContactActionAccessor.Object);
             var result = await contactAttemptService.HandleVoiceRequest(contactAttempt, contact);
 
             // Check results

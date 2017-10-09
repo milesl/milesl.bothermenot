@@ -1,17 +1,23 @@
 ﻿using MilesL.BotherMeNot.Api.Models;
 using MilesL.BotherMeNot.Api.Models.Interfaces;
 using MilesL.BotherMeNot.Api.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 
 namespace MilesL.BotherMeNot.Api.Repositories
 {
+    /// <summary>
+    /// Contact Attempt Repository for accessing contact attempt data
+    /// </summary>
+    /// <seealso cref="MilesL.BotherMeNot.Api.Repositories.Repository{MilesL.BotherMeNot.Api.Models.ContactAttempt, MilesL.BotherMeNot.Api.Models.Interfaces.IContactAttempt}" />
+    /// <seealso cref="MilesL.BotherMeNot.Api.Repositories.Interfaces.IContactAttemptRepository" />
     public class ContactAttemptRepository : Repository<ContactAttempt, IContactAttempt>, IContactAttemptRepository
     {
-        public ContactAttemptRepository(BotherMeNotDbContext dbConext) : base(dbConext) { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContactAttemptRepository"/> class.
+        /// </summary>
+        /// <param name="dbConext">The database conext.</param>
+        public ContactAttemptRepository(BotherMeNotDbContext dbConext)
+            : base(dbConext)
+        {
+        }
     }
 }
